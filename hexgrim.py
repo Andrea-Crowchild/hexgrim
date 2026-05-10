@@ -11,21 +11,23 @@ def cli(ctx):
         with open("/home/hexbeak/Code/python/hexgrim/config/hexgrim.toml", "r") as f:
             doc = tomlkit.load(f)
 
-        for title, description in doc.items():
-            print(title, description)
+        for name, desc in sorted(doc["commands"].items()):
+            print(name, ":", desc["description"])
 
 
 @cli.command()
-def add():
+@click.argument("name")
+@click.argument("description")
+def add(name, description):
     with open("/home/hexbeak/Code/python/hexgrim/config/hexgrim.toml", "r") as f:
         doc = tomlkit.load(f)
+    try:
+        entry = tomlkit.table()
+        entry.add("description", description)
 
-    print("Input command")
-    input_title = input()
-    print("Input description")
-    input_desc = input()
-
-    doc[input_title] = input_desc
+        doc["commands"].add(name, entry)
+    except:
+        print("That's already in the grimoire!")
 
     with open("/home/hexbeak/Code/python/hexgrim/config/hexgrim.toml", "w") as f:
         tomlkit.dump(doc, f)
@@ -42,7 +44,7 @@ def new():
             print("Are you sure you wish to reset saved data?")
             print("Type Y/N to continue")
             choice = input()
-            if choice == "Y" or "y":
+            if choice == "Y" or choice == "y":
                 with open(config_file, "w") as f:
                     tomlkit.dump({"commands": {}}, f)
                 print("Saved data cleared!")

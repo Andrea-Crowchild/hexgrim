@@ -1,3 +1,9 @@
-fuck = "jesus christ"
-
 [commands]
+[commands.jesus]
+description = "H Fucking Christ"
+
+[commands.butts]
+description = "Another entry"
+
+[commands.alphabet]
+description = "arges"

@@ -17,7 +17,18 @@ def cli(ctx):
 
 @cli.command()
 def add():
-    pass
+    with open("/home/hexbeak/Code/python/hexgrim/config/hexgrim.toml", "r") as f:
+        doc = tomlkit.load(f)
+
+    print("Input command")
+    input_title = input()
+    print("Input description")
+    input_desc = input()
+
+    doc[input_title] = input_desc
+
+    with open("/home/hexbeak/Code/python/hexgrim/config/hexgrim.toml", "w") as f:
+        tomlkit.dump(doc, f)
 
 
 @cli.command()

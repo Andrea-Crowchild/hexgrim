@@ -57,5 +57,11 @@ def new():
             tomlkit.dump({"commands": {}}, f)
 
 
+@cli.command()
+@click.argument("name")
+def remove(name):
+    pass
+
+
 if __name__ == "__main__":
     cli()

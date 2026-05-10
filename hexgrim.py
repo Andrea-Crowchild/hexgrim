@@ -8,7 +8,16 @@ import tomlkit
 @click.pass_context
 def cli(ctx):
     if ctx.invoked_subcommand is None:
-        print("Dummy behavior")
+        with open("/home/hexbeak/Code/python/hexgrim/config/hexgrim.toml", "r") as f:
+            doc = tomlkit.load(f)
+
+        for title, description in doc.items():
+            print(title, description)
+
+
+@cli.command()
+def add():
+    pass
 
 
 @cli.command()

@@ -7,6 +7,11 @@ config_dir = os.path.expanduser("~/.config/hexgrim/")
 CONFIG_FILE = os.path.join(config_dir, "hexgrim.toml")
 
 
+# TODO: Make exceptions better
+# TODO: Cleanup
+# TODO: Testing
+# TODO: Fix Spacing
+# TODO: standardize messages
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
@@ -18,12 +23,18 @@ def cli(ctx):
             print(name, ":", desc["description"])
 
 
+# TODO: standardize messages
 @cli.command()
 @click.argument("name")
 @click.argument("description")
 def add(name, description):
-    with open(CONFIG_FILE, "r") as f:
-        doc = tomlkit.load(f)
+    try:
+        with open(CONFIG_FILE, "r") as f:
+            doc = tomlkit.load(f)
+    except Exception:
+        print("Unable to open grimoire. Initialize with 'new' command!")
+        return
+
     try:
         entry = tomlkit.table()
         entry.add("description", description)
@@ -36,6 +47,7 @@ def add(name, description):
         print("That's already in the grimoire!")
 
 
+# TODO: standardize messages
 @cli.command()
 def new():
     os.makedirs(config_dir, exist_ok=True)
@@ -58,6 +70,7 @@ def new():
             tomlkit.dump({"commands": {}}, f)
 
 
+# TODO: standardize messages
 @cli.command()
 @click.argument("name")
 def remove(name):

@@ -22,8 +22,9 @@ def cli(ctx):
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
         # TODO Get this outputting in neat clean columns for piping to less
+        width = max(len(name) for name in doc["commands"]) + 2
         for name, desc in sorted(doc["commands"].items()):
-            print(name, ":", desc["description"])
+            print(name.ljust(width), ":", desc["description"])
 
 
 # : standardize messages

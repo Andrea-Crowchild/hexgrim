@@ -8,6 +8,9 @@ import tomlkit
 CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim.toml")
 
 
+# TODO: Better help doc
+# TODO: Add ability to save and backup toml
+# TODO: Ability to edit spells
 # TODO: good comments necessary
 # TODO: Make exceptions better
 # TODO: Cleanup
@@ -21,7 +24,7 @@ def cli(ctx):
     if ctx.invoked_subcommand is None:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
-        # TODO Get this outputting in neat clean columns for piping to less
+
         width = max(len(name) for name in doc["commands"]) + 2
         for name, desc in sorted(doc["commands"].items()):
             print(name.ljust(width), ":", desc["description"])
@@ -60,6 +63,7 @@ def new():
 def add(name, description):
     if not os.path.exists(CONFIG_FILE):
         print("Grimoire needs to be created with command 'new'!")
+        return
     try:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
@@ -77,6 +81,30 @@ def add(name, description):
             tomlkit.dump(doc, f)
     except Exception:
         print("That spell is already known!")
+
+
+@cli.command()
+@click.argument("name")
+@click.argument("description")
+def edit(name, description):
+    if not os.path.exists(CONFIG_FILE):
+        print("Grimoire needs to be created with command 'new'!")
+        return
+    try:
+        with open(CONFIG_FILE, "r") as f:
+            doc = tomlkit.load(f)
+    except tomlkit.exceptions.ParseError:
+        print("Grimoire unreadable, the text has been corrupted!")
+        return
+
+    if name not in doc["commands"]:
+        print("Unknown spell, use add to add a new spell!")
+        return
+    entry = tomlkit.table()
+    entry.add("description", description)
+    doc["commands"][name] = entry
+    with open(CONFIG_FILE, "w") as f:
+        tomlkit.dump(doc, f)
 
 
 # : standardize messages

@@ -5,8 +5,7 @@ import os
 import click
 import tomlkit
 
-config_dir = os.path.expanduser("~/.config/hexgrim/")
-CONFIG_FILE = os.path.join(config_dir, "hexgrim.toml")
+CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim.toml")
 
 
 # TODO: good comments necessary
@@ -32,6 +31,7 @@ def cli(ctx):
 # NOTE: Possibly change confirmation dialog
 @cli.command()
 def new():
+    config_dir = os.path.expanduser("~/.config/hexgrim/")
     os.makedirs(config_dir, exist_ok=True)
 
     if os.path.exists(CONFIG_FILE):

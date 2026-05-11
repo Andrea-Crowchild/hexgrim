@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 
 import click
@@ -7,18 +9,21 @@ config_dir = os.path.expanduser("~/.config/hexgrim/")
 CONFIG_FILE = os.path.join(config_dir, "hexgrim.toml")
 
 
+# TODO Reorder functions
+# TODO: good comments necessary
 # TODO: Make exceptions better
 # TODO: Cleanup
 # TODO: Testing
 # TODO: Fix Spacing
 # TODO: standardize messages
+# TODO Prep for packaging
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
     if ctx.invoked_subcommand is None:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
-
+        # TODO Get this outputting in neat clean columns for piping to less
         for name, desc in sorted(doc["commands"].items()):
             print(name, ":", desc["description"])
 
@@ -34,6 +39,7 @@ def add(name, description):
     except Exception:
         print("Unable to open grimoire. Initialize with 'new' command!")
         return
+    # TODO: fix this except block
 
     try:
         entry = tomlkit.table()
@@ -48,6 +54,8 @@ def add(name, description):
 
 
 # TODO: standardize messages
+# TODO: Add feedback for when a fresh file is made
+# NOTE: Possibly change confirmation dialog
 @cli.command()
 def new():
     os.makedirs(config_dir, exist_ok=True)
@@ -80,11 +88,12 @@ def remove(name):
             doc = tomlkit.load(f)
     except Exception:
         print("Unable to open grimoire")
+        return
 
     if name in doc["commands"]:
         doc["commands"].pop(name)
         print("Entry removed from grimoire")
-
+    # BUG still writes if unable to locate name
     with open(CONFIG_FILE, "w") as f:
         tomlkit.dump(doc, f)
 

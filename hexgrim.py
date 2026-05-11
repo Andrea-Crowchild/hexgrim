@@ -10,13 +10,10 @@ CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim.toml")
 
 # TODO: Better help doc
 # TODO: Add ability to save and backup toml
-# : Ability to edit spells
 # TODO: good comments necessary
 # TODO: Make exceptions better
 # TODO: Cleanup
 # TODO: Testing
-# : Fix Spacing
-# : standardize messages
 # TODO Prep for packaging
 @click.group(invoke_without_command=True)
 @click.pass_context
@@ -31,9 +28,6 @@ def cli(ctx):
             print(name.ljust(width), ":", desc["description"])
 
 
-# : standardize messages
-# : Add feedback for when a fresh file is made
-# NOTE: Possibly change confirmation dialog
 @cli.command()
 def new():
     """Create a new grimoire or purge the file and start anew"""
@@ -58,7 +52,6 @@ def new():
             tomlkit.dump({"commands": {}}, f)
 
 
-# : standardize messages
 @cli.command()
 @click.argument("name")
 @click.argument("description")
@@ -111,7 +104,6 @@ def edit(name, description):
         tomlkit.dump(doc, f)
 
 
-# : standardize messages
 @cli.command()
 @click.argument("name")
 def remove(name):
@@ -130,7 +122,6 @@ def remove(name):
         doc["commands"].pop(name)
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump(doc, f)
-    #  still writes if unable to locate name
 
 
 @cli.command()

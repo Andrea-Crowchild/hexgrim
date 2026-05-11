@@ -9,7 +9,6 @@ config_dir = os.path.expanduser("~/.config/hexgrim/")
 CONFIG_FILE = os.path.join(config_dir, "hexgrim.toml")
 
 
-# TODO Reorder functions
 # TODO: good comments necessary
 # TODO: Make exceptions better
 # TODO: Cleanup
@@ -26,31 +25,6 @@ def cli(ctx):
         # TODO Get this outputting in neat clean columns for piping to less
         for name, desc in sorted(doc["commands"].items()):
             print(name, ":", desc["description"])
-
-
-# TODO: standardize messages
-@cli.command()
-@click.argument("name")
-@click.argument("description")
-def add(name, description):
-    try:
-        with open(CONFIG_FILE, "r") as f:
-            doc = tomlkit.load(f)
-    except Exception:
-        print("Unable to open grimoire. Initialize with 'new' command!")
-        return
-    # TODO: fix this except block
-
-    try:
-        entry = tomlkit.table()
-        entry.add("description", description)
-
-        doc["commands"].add(name, entry)
-        with open(CONFIG_FILE, "w") as f:
-            tomlkit.dump(doc, f)
-        print("Entry added to grimoire")
-    except Exception:
-        print("That's already in the grimoire!")
 
 
 # TODO: standardize messages
@@ -76,6 +50,31 @@ def new():
     else:
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump({"commands": {}}, f)
+
+
+# TODO: standardize messages
+@cli.command()
+@click.argument("name")
+@click.argument("description")
+def add(name, description):
+    try:
+        with open(CONFIG_FILE, "r") as f:
+            doc = tomlkit.load(f)
+    except Exception:
+        print("Unable to open grimoire. Initialize with 'new' command!")
+        return
+    # TODO: fix this except block
+
+    try:
+        entry = tomlkit.table()
+        entry.add("description", description)
+
+        doc["commands"].add(name, entry)
+        with open(CONFIG_FILE, "w") as f:
+            tomlkit.dump(doc, f)
+        print("Entry added to grimoire")
+    except Exception:
+        print("That's already in the grimoire!")
 
 
 # TODO: standardize messages

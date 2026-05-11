@@ -32,7 +32,7 @@ def add(name, description):
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump(doc, f)
         print("Entry added to grimoire")
-    except:
+    except Exception:
         print("That's already in the grimoire!")
 
 
@@ -65,13 +65,12 @@ def remove(name):
     try:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
-    except:
-        print("Unable to read grimoire!")
+    except Exception:
+        print("Unable to open grimoire")
 
     if name in doc["commands"]:
         doc["commands"].pop(name)
-    else:
-        print(f"{name} not found in grimoire!")
+        print("Entry removed from grimoire")
 
     with open(CONFIG_FILE, "w") as f:
         tomlkit.dump(doc, f)

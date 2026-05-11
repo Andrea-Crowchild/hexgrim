@@ -13,7 +13,7 @@ CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim.toml")
 # TODO: Cleanup
 # TODO: Testing
 # TODO: Fix Spacing
-# TODO: standardize messages
+# : standardize messages
 # TODO Prep for packaging
 @click.group(invoke_without_command=True)
 @click.pass_context
@@ -26,8 +26,8 @@ def cli(ctx):
             print(name, ":", desc["description"])
 
 
-# TODO: standardize messages
-# TODO: Add feedback for when a fresh file is made
+# : standardize messages
+# : Add feedback for when a fresh file is made
 # NOTE: Possibly change confirmation dialog
 @cli.command()
 def new():
@@ -36,34 +36,36 @@ def new():
 
     if os.path.exists(CONFIG_FILE):
         while True:
-            print("Are you sure you wish to reset saved data?")
-            print("Type Y/N to continue")
+            print(
+                "A grimoire already exists, do you choose to purge it and start anew?"
+            )
+            print("Type Y/N to continue!")
             choice = input()
             if choice == "Y" or choice == "y":
                 with open(CONFIG_FILE, "w") as f:
                     tomlkit.dump({"commands": {}}, f)
-                print("Saved data cleared!")
                 break
             else:
-                print("Saved data retained")
                 break
     else:
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump({"commands": {}}, f)
 
 
-# TODO: standardize messages
+# : standardize messages
 @cli.command()
 @click.argument("name")
 @click.argument("description")
 def add(name, description):
+    if not os.path.exists(CONFIG_FILE):
+        print("Grimoire needs to be created with command 'new'!")
     try:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
-    except Exception:
-        print("Unable to open grimoire. Initialize with 'new' command!")
+    except tomlkit.exceptions.ParseError:
+        print("Grimoire unreadable, the text has been corrupted!")
         return
-    # TODO: fix this except block
+    # : fix this except block
 
     try:
         entry = tomlkit.table()
@@ -72,29 +74,29 @@ def add(name, description):
         doc["commands"].add(name, entry)
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump(doc, f)
-        print("Entry added to grimoire")
     except Exception:
-        print("That's already in the grimoire!")
+        print("That spell is already known!")
 
 
-# TODO: standardize messages
+# : standardize messages
 @cli.command()
 @click.argument("name")
 def remove(name):
-
+    if not os.path.exists(CONFIG_FILE):
+        print("Create a grimoire first with command 'new'!")
+        return
     try:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
-    except Exception:
-        print("Unable to open grimoire")
+    except tomlkit.exceptions.ParseError:
+        print("Grimoire unreadable, the text has been corrupted!")
         return
 
     if name in doc["commands"]:
         doc["commands"].pop(name)
-        print("Entry removed from grimoire")
-    # BUG still writes if unable to locate name
-    with open(CONFIG_FILE, "w") as f:
-        tomlkit.dump(doc, f)
+        with open(CONFIG_FILE, "w") as f:
+            tomlkit.dump(doc, f)
+    #  still writes if unable to locate name
 
 
 if __name__ == "__main__":

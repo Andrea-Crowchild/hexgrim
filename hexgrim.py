@@ -10,17 +10,18 @@ CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim.toml")
 
 # TODO: Better help doc
 # TODO: Add ability to save and backup toml
-# TODO: Ability to edit spells
+# : Ability to edit spells
 # TODO: good comments necessary
 # TODO: Make exceptions better
 # TODO: Cleanup
 # TODO: Testing
-# TODO: Fix Spacing
+# : Fix Spacing
 # : standardize messages
 # TODO Prep for packaging
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
+    """Hexgrim - a personal command reference tool"""
     if ctx.invoked_subcommand is None:
         with open(CONFIG_FILE, "r") as f:
             doc = tomlkit.load(f)
@@ -35,6 +36,7 @@ def cli(ctx):
 # NOTE: Possibly change confirmation dialog
 @cli.command()
 def new():
+    """Create a new grimoire or purge the file and start anew"""
     config_dir = os.path.expanduser("~/.config/hexgrim/")
     os.makedirs(config_dir, exist_ok=True)
 
@@ -61,6 +63,7 @@ def new():
 @click.argument("name")
 @click.argument("description")
 def add(name, description):
+    """Add an entry to the grimoire"""
     if not os.path.exists(CONFIG_FILE):
         print("Grimoire needs to be created with command 'new'!")
         return
@@ -87,6 +90,7 @@ def add(name, description):
 @click.argument("name")
 @click.argument("description")
 def edit(name, description):
+    """Edit an entry in the grimoire"""
     if not os.path.exists(CONFIG_FILE):
         print("Grimoire needs to be created with command 'new'!")
         return
@@ -111,6 +115,7 @@ def edit(name, description):
 @cli.command()
 @click.argument("name")
 def remove(name):
+    """Remove an entry from the grimoire"""
     if not os.path.exists(CONFIG_FILE):
         print("Create a grimoire first with command 'new'!")
         return
@@ -126,6 +131,12 @@ def remove(name):
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump(doc, f)
     #  still writes if unable to locate name
+
+
+@cli.command()
+@click.argument("location")
+def save(location):
+    pass
 
 
 if __name__ == "__main__":

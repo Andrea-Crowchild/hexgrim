@@ -75,7 +75,7 @@ def add(name, description):
         doc["commands"].add(name, entry)
         with open(CONFIG_FILE, "w") as f:
             tomlkit.dump(doc, f)
-    except Exception:
+    except tomlkit.exceptions.KeyAlreadyPresent:
         print("That spell is already known!")
 
 
@@ -127,6 +127,7 @@ def remove(name):
 @cli.command()
 @click.argument("location")
 def save(location):
+    """Save a copy of your grimoire"""
     pass
 
 

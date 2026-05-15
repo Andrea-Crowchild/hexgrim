@@ -8,7 +8,6 @@ import tomlkit
 CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim2.toml")
 
 
-# TODO: Fix what happens when there is no grimoire or grimoire has no entries. 
 # TODO: Better help doc
 # TODO: Add ability to save and backup toml
 # TODO: good comments necessary
@@ -20,13 +19,16 @@ CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim2.toml")
 @click.pass_context
 def cli(ctx):
     """Hexgrim - a personal command reference tool"""
-    if not os.path.exists(CONFIG_FILE):
+    if not os.path.exists(CONFIG_FILE) and ctx.invoked_subcommand != "new":
         print("Grimoire needs to be created with command 'new'!")
         return
     try:
         if ctx.invoked_subcommand is None:
             with open(CONFIG_FILE, "r") as f:
                 doc = tomlkit.load(f)
+            if not doc["commands"]:
+                print("Your grimoire is empty!")
+                return
             width = max(len(name) for name in doc["commands"]) + 2
             for name, desc in sorted(doc["commands"].items()):
                 print(name.ljust(width), ":", desc["description"])

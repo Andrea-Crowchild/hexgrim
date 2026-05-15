@@ -5,9 +5,10 @@ import os
 import click
 import tomlkit
 
-CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim.toml")
+CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim2.toml")
 
 
+# TODO: Fix what happens when there is no grimoire or grimoire has no entries. 
 # TODO: Better help doc
 # TODO: Add ability to save and backup toml
 # TODO: good comments necessary

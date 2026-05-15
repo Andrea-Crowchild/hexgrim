@@ -20,13 +20,20 @@ CONFIG_FILE = os.path.expanduser("~/.config/hexgrim/hexgrim2.toml")
 @click.pass_context
 def cli(ctx):
     """Hexgrim - a personal command reference tool"""
-    if ctx.invoked_subcommand is None:
-        with open(CONFIG_FILE, "r") as f:
-            doc = tomlkit.load(f)
+    if not os.path.exists(CONFIG_FILE):
+        print("Grimoire needs to be created with command 'new'!")
+        return
+    try:
+        if ctx.invoked_subcommand is None:
+            with open(CONFIG_FILE, "r") as f:
+                doc = tomlkit.load(f)
+            width = max(len(name) for name in doc["commands"]) + 2
+            for name, desc in sorted(doc["commands"].items()):
+                print(name.ljust(width), ":", desc["description"])
 
-        width = max(len(name) for name in doc["commands"]) + 2
-        for name, desc in sorted(doc["commands"].items()):
-            print(name.ljust(width), ":", desc["description"])
+    except tomlkit.exceptions.ParseError:
+        print("Grimoire unreadable, the text has become corrupted!")
+        return
 
 
 @cli.command()
